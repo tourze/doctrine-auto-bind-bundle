@@ -6,3 +6,41 @@ services:
 
 #  Tourze\DoctrineAutoBindBundle\Service\:
 #    resource: '../../Service/'
+
+# 注册 EntityManager 工厂
+Tourze\DoctrineAutoBindBundle\Factory\EntityManagerFactory:
+  public: true
+
+# 注册 Bundle 的核心服务
+Tourze\DoctrineAutoBindBundle\Service\EntityManagerLocator:
+  arguments:
+    $entityManagers: '@service_locator_default_entity_managers'
+
+# Service Locator 用于 EntityManager
+service_locator_default_entity_managers:
+  class: Symfony\Component\DependencyInjection\ServiceLocator
+  arguments:
+    - default: '@doctrine.orm.default_entity_manager'
+  tags:
+    - { name: container.service_locator }
+
+# 自动注册所有服务类
+Tourze\DoctrineAutoBindBundle\Service\:
+  resource: '../../Service/'
+  
+# 自动注册所有数据库相关类
+Tourze\DoctrineAutoBindBundle\DB\:
+  resource: '../../DB/'
+
+# 自动注册所有工厂类
+Tourze\DoctrineAutoBindBundle\Factory\:
+  resource: '../../Factory/'
+
+# 别名定义，方便使用
+doctrine_auto_bind.entity_manager_locator:
+  alias: Tourze\DoctrineAutoBindBundle\Service\EntityManagerLocator
+  public: true
+
+doctrine_auto_bind.entity_manager_factory:
+  alias: Tourze\DoctrineAutoBindBundle\Factory\EntityManagerFactory
+  public: true
